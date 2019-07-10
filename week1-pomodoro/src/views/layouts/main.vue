@@ -12,7 +12,14 @@ export default {
 </script>
 <template>
   <a-layout>
-    <a-layout-sider v-model="collapsed" :class="$style.sider" :trigger="null" collapsible>
+    <a-layout-sider
+      breakpoint="lg"
+      collapsedWidth="0"
+      v-model="collapsed"
+      :class="$style.sider"
+      :trigger="null"
+      collapsible
+    >
       <a-avatar :size="64" icon="user" />
       <SideMenu />
       <a

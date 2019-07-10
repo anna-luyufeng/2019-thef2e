@@ -108,7 +108,6 @@ export default {
        */
       this.workingTask = task
       this.$refs.taskTimer.toggleTimer()
-      console.log(this.$refs.taskTimer)
     },
     completeTask(task) {
       /**
@@ -208,9 +207,17 @@ export default {
   border-radius: $size-task-border-radius;
   margin: 10px;
 }
-:global(.task-prefix) {
-  padding-right: 10px;
-  color: #bfbfbf;
-  font-size: 1.25rem;
+:global {
+  .task-prefix,
+  .task-suffix {
+    color: #bfbfbf;
+    font-size: 1.25rem;
+  }
+  .task-prefix {
+    padding-right: 10px;
+  }
+  .task-suffix {
+    padding-left: 10px;
+  }
 }
 </style>
