@@ -12,14 +12,15 @@ export default {
 </script>
 <template>
   <a-layout>
-    <a-layout-sider
-      v-model="collapsed"
-      :class="$style.sider"
-      :trigger="null"
-      collapsible
-    >
+    <a-layout-sider v-model="collapsed" :class="$style.sider" :trigger="null" collapsible>
       <a-avatar :size="64" icon="user" />
       <SideMenu />
+      <a
+        href="https://github.com/littlegreening/2019-thef2e/tree/master/week1-pomodoro"
+        target="_blank"
+      >
+        <a-icon type="github" />
+      </a>
     </a-layout-sider>
     <a-layout>
       <a-layout-header :class="$style.header">
@@ -29,9 +30,7 @@ export default {
           @click="() => (collapsed = !collapsed)"
         />
       </a-layout-header>
-      <a-layout-content
-        :style="{ padding: '24px', background: '#fff', minHeight: '100vh' }"
-      >
+      <a-layout-content :style="{ minHeight: '100vh' }">
         <slot />
       </a-layout-content>
     </a-layout>
@@ -40,10 +39,16 @@ export default {
 <style lang="scss" module>
 @import '@design';
 .sider {
-  background-color: white;
+  // background-color: white;
+  :global(.ant-layout-sider-children) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+  }
 }
 .header {
-  background-color: white;
+  background-color: $color-primary;
   padding: 0;
 }
 .toggle {

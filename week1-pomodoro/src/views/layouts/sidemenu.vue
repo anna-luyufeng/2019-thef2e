@@ -2,7 +2,7 @@
 export default {
   data() {
     return {
-      active: ['home'],
+      current: 'home',
       routes: [
         {
           name: 'home',
@@ -22,11 +22,16 @@ export default {
       ],
     }
   },
+  methods: {
+    updateCurrent(e) {
+      this.current = e.key
+    },
+  },
 }
 </script>
 
 <template>
-  <a-menu v-model="active" mode="inline">
+  <a-menu theme="dark" :selected-keys="[current]" mode="inline" @click="updateCurrent">
     <a-menu-item v-for="route in routes" :key="route.name">
       <router-link :to="{ name: route.name }">
         <a-icon :type="route.icon" />
