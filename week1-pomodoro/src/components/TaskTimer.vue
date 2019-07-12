@@ -1,4 +1,6 @@
 <script>
+import AnimateTimer from './AnimateTimer'
+
 function initData(status) {
   // minutes
   const statusTime = {
@@ -13,6 +15,9 @@ function initData(status) {
   }
 }
 export default {
+  components: {
+    AnimateTimer,
+  },
   props: {
     status: {
       type: String,
@@ -78,7 +83,7 @@ export default {
     covertSecondsToTime(s) {
       const min = Math.floor(s / 60)
       const sec = s % 60
-      return `${this.formatNumber(min)}:${this.formatNumber(sec)}`
+      return `${this.formatNumber(min)}${this.formatNumber(sec)}`
     },
     setCurrentTime(time) {
       this.currentTime = this.covertSecondsToTime(time)
@@ -89,7 +94,7 @@ export default {
 <template>
   <div :class="$style.wrapper">
     <div :class="$style.content">
-      <div :class="$style.time">{{currentTime}}</div>
+      <AnimateTimer :time="currentTime" />
       <div>
         {{ task.name }}
         <ul :class="$style['tomato-list']">
@@ -122,10 +127,7 @@ export default {
   padding: 10px;
   text-align: center;
 }
-.time {
-  // color: white;
-  font-size: 5rem;
-}
+
 .tomato-list {
   padding: 0;
   margin-left: 0;

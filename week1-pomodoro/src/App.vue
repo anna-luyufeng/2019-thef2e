@@ -3,6 +3,3 @@
     <RouterView :key="$route.fullPath" />
   </div>
 </template>
-
-<style lang="scss">
-</style>

@@ -34,16 +34,15 @@ export default {
   <div :class="[$style.item, working ? $style['is-working'] : '']">
     <div :class="$style['item__title']">
       <input
-        :class="$style.radio"
         :id="`task-${data.id}`"
+        :class="$style.radio"
         :checked="data.compelete"
         type="checkbox"
         @change="onChange"
       />
       <label :for="`task-${data.id}`">{{data.name}}</label>
-      {{data.name}}
     </div>
-    <div :class="$style['item__actions']" v-if="!compelete">
+    <div v-if="!compelete" :class="$style['item__actions']">
       <div :class="$style['item__tools']">
         <a-icon type="delete" />
         <a-icon type="edit" />
@@ -60,11 +59,8 @@ export default {
 <style lang="scss" module>
 @import '@design';
 .item {
-  &:hover {
-    cursor: pointer;
-    .item__tools {
-      display: flex;
-    }
+  &:hover .item__tools {
+    display: flex;
   }
   &.is-working {
     box-shadow: 0 2px 8px #f0f1f2;
@@ -77,9 +73,15 @@ export default {
     display: flex;
     align-items: center;
   }
-}
-.item__tools {
-  display: none;
+  &__tools {
+    display: none;
+    :global(.anticon) {
+      padding: 0 10px;
+    }
+  }
+  :global(.anticon) {
+    cursor: pointer;
+  }
 }
 .radio {
   position: absolute;
@@ -87,8 +89,6 @@ export default {
   & + label {
     position: relative;
     cursor: pointer;
-    padding: 0;
-    font-size: 0;
     &:before {
       content: '';
       margin-right: 10px;
@@ -97,23 +97,27 @@ export default {
       height: 20px;
       border: 1px solid $color-border-base;
       border-radius: 50%;
+      vertical-align: middle;
     }
   }
 
   &:checked,
   &:hover {
-    & + label:after {
-      content: '';
-      position: absolute;
-      left: 5px;
-      top: 9px;
-      background: $color-border-base;
-      width: 2px;
-      height: 2px;
-      box-shadow: 2px 0 0 $color-border-base, 4px 0 0 $color-border-base,
-        4px -2px 0 $color-border-base, 4px -4px 0 $color-border-base,
-        4px -6px 0 $color-border-base, 4px -8px 0 $color-border-base;
-      transform: rotate(45deg);
+    & + label {
+      text-decoration: line-through;
+      &:after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 50%;
+        background: $color-border-base;
+        width: 2px;
+        height: 2px;
+        box-shadow: 2px 0 0 $color-border-base, 4px 0 0 $color-border-base,
+          4px -2px 0 $color-border-base, 4px -4px 0 $color-border-base,
+          4px -6px 0 $color-border-base, 4px -8px 0 $color-border-base;
+        transform: rotate(45deg);
+      }
     }
   }
 }
