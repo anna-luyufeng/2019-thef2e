@@ -24,17 +24,9 @@ export default {
     return {
       timer: {
         active: false,
-        status: 'work',
       },
       newTaskName: '',
-      workingTask: {
-        // id: 5,
-        // name: '基本待辦事項新增、勾選完成',
-        // description: '描述文字描述文字描述文字',
-        // compelete: false,
-        // compelete_at: '',
-        // records: [],
-      },
+      workingTask: {},
       tasks: [
         {
           id: 6,
@@ -96,32 +88,47 @@ export default {
     },
   },
   methods: {
-    toggleTimerAcitve() {
-      console.log('TCL: toggleTimerAcitve -> toggleTimerAcitve')
-      this.timer.active = !this.timer.active
+    updateWorkingTask(task) {
+      const noWorkingTask = Object.keys(this.workingTask).length === 0
+
+      return new Promise((resolve, reject) => {
+        if (noWorkingTask) {
+          this.startWorkingTask(task)
+          resolve()
+        } else {
+          this.$confirm({
+            title: '是否要放棄目前進行中的蕃茄？',
+            content: '放棄此番茄將不會紀錄此次計時',
+            onOk: () => {
+              this.startWorkingTask(task)
+              resolve()
+            },
+          })
+        }
+      })
     },
-    changeWorkingTask(task) {
-      /**
-       * TODO: check workingTask is empty or not
-       * yes: show modal sure to stop current task & start new task
-       * no: direct assign new task to workingTask
-       */
-      this.workingTask = task
+    startBreakingTask() {
+      this.timer.mode = 'break'
       this.$refs.taskTimer.toggleTimer()
     },
-    completeTask(task) {
-      /**
-       * TODO: find the task in tasks array by id
-       * TODO: clear the workingTask
-       */
-      console.log(task)
+    startWorkingTask(task) {
+      this.workingTask = task
+      this.$refs.taskTimer.resetTimer()
+      this.$refs.taskTimer.toggleTimer()
     },
-    emptyNewTaskInput() {
-      this.$refs.newTaskNameInput.focus()
-      this.newTaskName = ''
+    completeTask(targetTask) {
+      const targetIndex = this.tasks.indexOf(targetTask)
+      const { compelete } = targetTask
+      this.$set(this.tasks, targetIndex, {
+        ...targetTask,
+        compelete: !compelete,
+        compelete_at: compelete ? '' : new Date(),
+      })
+      if (targetTask === this.workingTask) {
+        this.workingTask = {}
+      }
     },
     handleAddTask(startWorking = false) {
-      console.log('TCL: handleAddTask -> handleAddTask')
       const value = this.newTaskName && this.newTaskName.trim() // 去除空白
       if (!value) return
       const newTask = {
@@ -132,11 +139,16 @@ export default {
         compelete_at: '',
         records: [],
       }
-      this.tasks.push(newTask)
+
       if (startWorking) {
-        this.changeWorkingTask(newTask)
+        this.updateWorkingTask(newTask).then(() => {
+          this.tasks.push(newTask)
+          this.newTaskName = ''
+        })
+      } else {
+        this.tasks.push(newTask)
+        this.newTaskName = ''
       }
-      this.newTaskName = ''
     },
   },
 }
@@ -147,15 +159,10 @@ export default {
       v-show="Object.keys(workingTask).length > 0"
       ref="taskTimer"
       :active="timer.active"
-      :status="timer.status"
       :task="workingTask"
       @complete="completeTask"
     />
 
-    <!-- <a-radio-group v-model="timer.status">
-      <a-radio-button value="work">work</a-radio-button>
-      <a-radio-button value="break">break</a-radio-button>
-    </a-radio-group>-->
     <div :class="$style.tasks">
       <div :class="$style['task-item']">
         <a-icon class="task-prefix" type="plus" />
@@ -175,9 +182,9 @@ export default {
         :key="task.id"
         :class="[$style['task-item'], task === workingTask ? $style['is-working']  : '']"
         :data="task"
-        :compelete.sync="task.compelete"
         :working="task === workingTask"
-        @start="changeWorkingTask"
+        @checked="completeTask"
+        @start="updateWorkingTask"
       />
 
       <div v-if="completedTasks">
@@ -187,7 +194,7 @@ export default {
           :key="task.id"
           :class="$style['task-item']"
           :data="task"
-          :compelete.sync="task.compelete"
+          @checked="completeTask"
         />
       </div>
     </div>

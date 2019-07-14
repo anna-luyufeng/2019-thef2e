@@ -46,7 +46,7 @@ export default {
 </template>
 <style lang="scss" module>
 @import '@design';
-$height: 50px;
+$height: 80px;
 @function strip-unit($number) {
   @if type-of($number) == 'number' and not unitless($number) {
     @return $number / ($number * 0 + 1);

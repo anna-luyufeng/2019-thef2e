@@ -5,24 +5,14 @@ export default {
       type: Object,
       required: true,
     },
-    compelete: {
-      type: Boolean,
-      required: true,
-    },
     working: {
       type: Boolean,
       default: false,
     },
   },
-  data() {
-    return {
-      checked: false,
-    }
-  },
   methods: {
     onChange(e) {
-      console.log(e.target.checked)
-      this.$emit('update:compelete', e.target.checked)
+      this.$emit('checked', this.data)
     },
     onStart() {
       this.$emit('start', this.data)
@@ -42,10 +32,16 @@ export default {
       />
       <label :for="`task-${data.id}`">{{data.name}}</label>
     </div>
-    <div v-if="!compelete" :class="$style['item__actions']">
+    <div v-if="!data.compelete" :class="$style['item__actions']">
       <div :class="$style['item__tools']">
-        <a-icon type="delete" />
-        <a-icon type="edit" />
+        <a-tooltip placement="top">
+          <span slot="title">Delete Task</span>
+          <a-icon type="delete" />
+        </a-tooltip>
+        <a-tooltip placement="top">
+          <span slot="title">Edit Task</span>
+          <a-icon type="edit" />
+        </a-tooltip>
       </div>
 
       <a-icon v-if="working" class="task-suffix" type="clock-circle" />

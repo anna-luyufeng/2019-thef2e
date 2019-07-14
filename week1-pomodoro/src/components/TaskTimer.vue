@@ -1,16 +1,16 @@
 <script>
 import AnimateTimer from './AnimateTimer'
 
-function initData(status) {
+function initData(mode) {
   // minutes
-  const statusTime = {
+  const modeTime = {
     work: 25,
     break: 5,
   }
   return {
-    active: false,
-    timeRemain: statusTime[status] * 60, // seconds
-    currentTime: '00:00',
+    playing: false,
+    timeRemain: modeTime[mode] * 60, // seconds
+    currentTime: `${modeTime[mode]}00`,
     timer: null,
   }
 }
@@ -19,29 +19,25 @@ export default {
     AnimateTimer,
   },
   props: {
-    status: {
-      type: String,
-      default: 'work',
-    },
     task: {
       type: Object,
       default: () => {},
     },
   },
   data() {
-    return initData(this.status)
+    return {
+      mode: 'work',
+      ...initData(this.mode),
+    }
   },
   computed: {
     progress() {
-      const { timeRemain } = initData(this.status)
+      const { timeRemain } = initData(this.mode)
       const workingTime = timeRemain - this.timeRemain
       return Math.floor((workingTime / timeRemain) * 100)
     },
   },
   watch: {
-    status() {
-      this.resetTimer()
-    },
     timeRemain: {
       handler: 'setCurrentTime',
       immediate: true,
@@ -53,24 +49,36 @@ export default {
     },
     // play & pause the timer
     toggleTimer() {
-      !this.active ? this.timeReducer() : this.stopTimer()
-      this.active = !this.active
+      !this.playing ? this.timeReducer() : this.pauseTimer()
+      this.playing = !this.playing
     },
-    resetTimer() {
-      // TODO: modal to confirm reset
-      this.stopTimer()
-      // would reset the timeRemain
-      Object.assign(this.$data, initData(this.status))
-    },
-    stopTimer() {
+    pauseTimer() {
       clearInterval(this.timer)
     },
-    timerComplete() {
-      this.status = 'break'
+    stopTimer() {
+      this.$confirm({
+        title: '是否要放棄目前進行中的蕃茄？',
+        content: '放棄此番茄將不會紀錄此次計時',
+        onOk: () => {
+          this.resetTimer()
+        },
+      })
+    },
+    resetTimer() {
+      this.pauseTimer()
+      Object.assign(this.$data, initData(this.mode))
+    },
+    timerEnds() {
+      const endByWork = this.mode === 'work'
+      // switch mode
+      this.mode = endByWork ? 'break' : 'work'
+      this.resetTimer()
+      // start timer
+      if (endByWork) this.toggleTimer()
     },
     timeReducer() {
       this.timer = setInterval(() => {
-        this.timeRemain > 0 ? (this.timeRemain -= 1) : this.stopTimer()
+        this.timeRemain > 0 ? (this.timeRemain -= 1) : this.timerEnds()
       }, 1000)
     },
 
@@ -94,26 +102,24 @@ export default {
 <template>
   <div :class="$style.wrapper">
     <div :class="$style.content">
-      <AnimateTimer :time="currentTime" />
       <div>
         {{ task.name }}
         <ul :class="$style['tomato-list']">
           <li v-for="(tomato, index) in task.records" :key="index" :class="$style.tomato"></li>
         </ul>
       </div>
+      <AnimateTimer :time="currentTime" />
+      <div :class="$style.buttons">
+        <a-button shape="circle" @click="completeTask">
+          <a-icon type="check" />
+        </a-button>
+        <a-button type="primary" shape="circle" size="large" @click="toggleTimer">
+          <a-icon :type="playing ? 'pause' : 'caret-right'" />
+        </a-button>
+        <a-icon v-show="playing" @click="stopTimer" type="stop" />
+      </div>
     </div>
-    <a-progress :percent="progress" status="active" :show-info="false" />
-    <a-button-group :class="$style.buttons">
-      <a-button @click="completeTask">
-        <a-icon type="check-circle" />
-      </a-button>
-      <a-button @click="toggleTimer">
-        <a-icon :type="active ? 'pause-circle' : 'play-circle'" />
-      </a-button>
-      <a-button @click="resetTimer">
-        <a-icon type="undo" />
-      </a-button>
-    </a-button-group>
+    <!-- <a-progress :percent="progress" mode="active" :show-info="false" /> -->
   </div>
 </template>
 <style lang="scss" module>
@@ -124,7 +130,7 @@ export default {
   box-shadow: 0 2px 8px #f0f1f2;
 }
 .content {
-  padding: 10px;
+  padding: 25px;
   text-align: center;
 }
 
@@ -139,11 +145,5 @@ export default {
   background-color: $color-primary;
   display: inline-block;
   margin: 0 5px;
-}
-.buttons {
-  display: flex;
-  :global(.ant-btn) {
-    flex: 1;
-  }
 }
 </style>

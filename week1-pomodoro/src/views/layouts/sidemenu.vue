@@ -17,7 +17,7 @@ export default {
         {
           name: 'settings',
           title: 'Settings',
-          icon: 'setting',
+          icon: 'sound',
         },
       ],
     }
@@ -27,9 +27,9 @@ export default {
 </script>
 
 <template>
-  <a-menu v-model="current" theme="dark" mode="inline">
+  <a-menu theme="dark" mode="inline" :selected-keys="[$route.name]">
     <a-menu-item v-for="route in routes" :key="route.name">
-      <router-link :to="{ name: route.name }" exact>
+      <router-link :to="{ name: route.name }">
         <a-icon :type="route.icon" />
         <span>{{ route.title }}</span>
       </router-link>

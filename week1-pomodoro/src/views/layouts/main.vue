@@ -14,10 +14,10 @@ export default {
   <a-layout>
     <a-layout-sider
       breakpoint="lg"
-      collapsedWidth="0"
-      v-model="collapsed"
+      collapsed-width="0"
       :class="$style.sider"
       :trigger="null"
+      :collapsed="collapsed"
       collapsible
     >
       <a-avatar :size="64" icon="user" />
@@ -36,6 +36,7 @@ export default {
           :type="collapsed ? 'menu-unfold' : 'menu-fold'"
           @click="() => (collapsed = !collapsed)"
         />
+        <span :class="$style.title">Pomodoro</span>
       </a-layout-header>
       <a-layout-content :style="{ minHeight: '100vh' }">
         <slot />
@@ -57,6 +58,10 @@ export default {
 .header {
   background-color: $color-primary;
   padding: 0;
+  color: white;
+  .title {
+    font-size: 1rem;
+  }
 }
 .toggle {
   padding: 0 24px;
