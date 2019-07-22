@@ -39,8 +39,8 @@ export default {
       :class="$style.column"
       :style="{ 'transform': `translateY(-${ ((number === separator) ? 1 : +number + 1) * +$style['row-height']}px)` }"
     >
-      <span v-if="number === separator" :class="$style.counter">{{ number}}</span>
-      <span v-for="(_,count) in counter" v-else :key="count" :class="$style.counter">{{count}}</span>
+      <span v-if="number === separator" :class="$style.number">{{ number}}</span>
+      <span v-for="(_,count) in counter" v-else :key="count" :class="$style.number">{{count}}</span>
     </div>
   </div>
 </template>
@@ -55,7 +55,7 @@ $height: 80px;
   @return $number;
 }
 .row {
-  // color: white;
+  margin: 15px;
   --row: #{$height};
   display: grid;
   grid: var(--row) / auto-flow auto;
@@ -68,7 +68,7 @@ $height: 80px;
     margin 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) 0.4s,
     -webkit-transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
-.counter {
+.number {
   display: block;
   font-size: $height;
   line-height: var(--row);

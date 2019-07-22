@@ -17,8 +17,8 @@ module.exports = {
         loaderOptions: {
             less: {
                 modifyVars: {
-                    'primary-color': '#ea5548',
-                    'link-color': '#ea5548',
+                    'primary-color': '#EA5548',
+                    'link-color': '#EA5548',
                     'font-family': "'Fjalla One',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol'",
                 },
                 javascriptEnabled: true,

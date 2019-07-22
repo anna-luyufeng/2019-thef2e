@@ -26,7 +26,6 @@ export default {
   },
   methods: {
     onChange(e) {
-      const targetValue = e.target.value
       const aurdioUrl = this.ringtonAudios[e.target.value]
       const audio = new Audio(aurdioUrl)
       // https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
@@ -40,7 +39,7 @@ export default {
               audio.currentTime = 0
             }, 3000)
           })
-          .catch((error) => {})
+          .catch(() => {})
       }
     },
   },
@@ -49,11 +48,18 @@ export default {
 
 <template>
   <Layout>
-    <a-card title="Work">
-      <a-radio-group :options="ringtoneOptions" @change="onChange" v-model="ringtone.work" />
+    <a-card :class="$style.card" title="Work">
+      <a-radio-group v-model="ringtone.work" :options="ringtoneOptions" @change="onChange" />
     </a-card>
-    <a-card title="Break">
-      <a-radio-group :options="ringtoneOptions" @change="onChange" v-model="ringtone.break" />
+    <a-card :class="$style.card" title="Break">
+      <a-radio-group v-model="ringtone.break" :options="ringtoneOptions" @change="onChange" />
     </a-card>
   </Layout>
 </template>
+<style lang="scss" module>
+@import '@design';
+
+.card {
+  margin-bottom: 15px;
+}
+</style>

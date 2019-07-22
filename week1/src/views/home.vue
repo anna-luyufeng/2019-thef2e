@@ -26,6 +26,8 @@ export default {
         active: false,
       },
       newTaskName: '',
+      editingTask: null,
+      editingTaskCache: '',
       workingTask: {},
       tasks: [
         {
@@ -88,6 +90,11 @@ export default {
     },
   },
   methods: {
+    clearWorkingTask(targetTask) {
+      if (targetTask === this.workingTask) {
+        this.workingTask = {}
+      }
+    },
     updateWorkingTask(task) {
       const noWorkingTask = Object.keys(this.workingTask).length === 0
 
@@ -97,8 +104,8 @@ export default {
           resolve()
         } else {
           this.$confirm({
-            title: '是否要放棄目前進行中的蕃茄？',
-            content: '放棄此番茄將不會紀錄此次計時',
+            title: 'Are you sure to stop current working task?',
+            content: "If you stop, the time wouldn't record in the task.",
             onOk: () => {
               this.startWorkingTask(task)
               resolve()
@@ -116,6 +123,37 @@ export default {
       this.$refs.taskTimer.resetTimer()
       this.$refs.taskTimer.toggleTimer()
     },
+    updateRecordTask(targetTask) {
+      const { records } = targetTask
+      records.push('1')
+    },
+
+    finishEditedTask(targetTask) {
+      if (!this.editingTask) return
+      this.editingTask = null
+
+      targetTask.name = targetTask.name.trim()
+      if (!targetTask.name) {
+        this.deleteTask(targetTask)
+      }
+    },
+    editTask(targetTask) {
+      this.editingTaskCache = targetTask.name
+      this.editingTask = targetTask
+    },
+    cancelEditTask(targetTask) {
+      this.editingTask = null
+      targetTask.name = this.editingTaskCache
+    },
+    deleteTask(targetTask) {
+      this.$confirm({
+        title: 'Are you sure to delete this task?',
+        onOk: () => {
+          this.tasks.splice(this.tasks.indexOf(targetTask), 1)
+          this.clearWorkingTask(targetTask)
+        },
+      })
+    },
     completeTask(targetTask) {
       const targetIndex = this.tasks.indexOf(targetTask)
       const { compelete } = targetTask
@@ -124,15 +162,14 @@ export default {
         compelete: !compelete,
         compelete_at: compelete ? '' : new Date(),
       })
-      if (targetTask === this.workingTask) {
-        this.workingTask = {}
-      }
+
+      this.clearWorkingTask(targetTask)
     },
     handleAddTask(startWorking = false) {
       const value = this.newTaskName && this.newTaskName.trim() // 去除空白
       if (!value) return
       const newTask = {
-        id: this.tasks.length + 2,
+        id: this.tasks.length++,
         name: value,
         description: '',
         compelete: false,
@@ -161,50 +198,51 @@ export default {
       :active="timer.active"
       :task="workingTask"
       @complete="completeTask"
+      @update-record="updateRecordTask"
     />
 
-    <div :class="$style.tasks">
-      <div :class="$style['task-item']">
-        <a-icon class="task-prefix" type="plus" />
-        <a-input
-          ref="newTaskNameInput"
-          v-model="newTaskName"
-          placeholder="What are you working on?"
-          @pressEnter="handleAddTask(false)"
-        />
-        <a-button v-if="newTaskName" @click="handleAddTask(true)">
-          <a-icon type="play-circle" />Start Task
-        </a-button>
-      </div>
-
-      <TaskItem
-        v-for="task in activeTasks"
-        :key="task.id"
-        :class="[$style['task-item'], task === workingTask ? $style['is-working']  : '']"
-        :data="task"
-        :working="task === workingTask"
-        @checked="completeTask"
-        @start="updateWorkingTask"
+    <div :class="$style['task-item']">
+      <a-icon class="task-prefix" type="plus" />
+      <a-input
+        ref="newTaskNameInput"
+        v-model="newTaskName"
+        placeholder="What are you working on?"
+        @pressEnter="handleAddTask(false)"
       />
+      <a-button v-if="newTaskName" @click="handleAddTask(true)">
+        <a-icon type="play-circle" />Start Task
+      </a-button>
+    </div>
 
-      <div v-if="completedTasks">
-        <a-divider orientation="left">Completed</a-divider>
-        <TaskItem
-          v-for="task in completedTasks"
-          :key="task.id"
-          :class="$style['task-item']"
-          :data="task"
-          @checked="completeTask"
-        />
-      </div>
+    <TaskItem
+      v-for="task in activeTasks"
+      :key="task.id"
+      :class="[$style['task-item'], task === workingTask ? $style['is-working']  : '']"
+      :data="task"
+      :working="task === workingTask"
+      :editing="task === editingTask"
+      @checked="completeTask"
+      @start="updateWorkingTask"
+      @delete="deleteTask"
+      @edit="editTask"
+      @cancel-edit="cancelEditTask"
+      @edited="finishEditedTask"
+    />
+
+    <div v-if="completedTasks">
+      <a-divider orientation="left">Completed</a-divider>
+      <TaskItem
+        v-for="task in completedTasks"
+        :key="task.id"
+        :class="$style['task-item']"
+        :data="task"
+        @checked="completeTask"
+      />
     </div>
   </Layout>
 </template>
 <style lang="scss" module>
 @import '@design';
-.tasks {
-  margin-top: 15px;
-}
 .task-item {
   display: flex;
   justify-content: space-between;
@@ -212,7 +250,7 @@ export default {
   padding: 15px;
   background-color: white;
   border-radius: $size-task-border-radius;
-  margin: 10px;
+  margin-bottom: 10px;
 }
 :global {
   .task-prefix,

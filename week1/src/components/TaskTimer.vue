@@ -56,9 +56,20 @@ export default {
       clearInterval(this.timer)
     },
     stopTimer() {
+      const confirmText = {
+        work: {
+          title: 'Are you sure to reset this tomato?',
+          content: "If you reset, the time wouldn't record in the task.",
+        },
+        break: {
+          title: "Don't be exhausted!",
+          content: 'Are you sure to skip the rest?',
+        },
+      }
       this.$confirm({
-        title: '是否要放棄目前進行中的蕃茄？',
-        content: '放棄此番茄將不會紀錄此次計時',
+        title: confirmText[this.mode].title,
+        content: confirmText[this.mode].content,
+
         onOk: () => {
           this.resetTimer()
         },
@@ -74,7 +85,10 @@ export default {
       this.mode = endByWork ? 'break' : 'work'
       this.resetTimer()
       // start timer
-      if (endByWork) this.toggleTimer()
+      if (endByWork) {
+        this.$emit('update-record', this.task)
+        this.toggleTimer()
+      }
     },
     timeReducer() {
       this.timer = setInterval(() => {
@@ -100,26 +114,39 @@ export default {
 }
 </script>
 <template>
-  <div :class="$style.wrapper">
+  <div :class="[$style.wrapper, $style[`wrapper--${mode}`]]">
+    <div :class="$style.dot"></div>
     <div :class="$style.content">
       <div>
-        {{ task.name }}
+        <div>{{ task.name }}</div>
         <ul :class="$style['tomato-list']">
           <li v-for="(tomato, index) in task.records" :key="index" :class="$style.tomato"></li>
         </ul>
       </div>
-      <AnimateTimer :time="currentTime" />
-      <div :class="$style.buttons">
-        <a-button shape="circle" @click="completeTask">
+      <AnimateTimer :time="currentTime" :class="$style.timer" />
+      <div :class="$style.controls">
+        <a-button :class="$style['button--side']" shape="circle" @click="completeTask">
           <a-icon type="check" />
         </a-button>
-        <a-button type="primary" shape="circle" size="large" @click="toggleTimer">
+        <a-button
+          :class="$style['button--center']"
+          type="primary"
+          shape="circle"
+          size="large"
+          @click="toggleTimer"
+        >
           <a-icon :type="playing ? 'pause' : 'caret-right'" />
         </a-button>
-        <a-icon v-show="playing" @click="stopTimer" type="stop" />
+        <a-button
+          v-show="playing"
+          :class="$style['button--side']"
+          shape="circle"
+          @click="stopTimer"
+        >
+          <a-icon type="close" />
+        </a-button>
       </div>
     </div>
-    <!-- <a-progress :percent="progress" mode="active" :show-info="false" /> -->
   </div>
 </template>
 <style lang="scss" module>
@@ -128,15 +155,30 @@ export default {
 .wrapper {
   background-color: white;
   box-shadow: 0 2px 8px #f0f1f2;
+  border-radius: $size-task-border-radius;
+  margin-bottom: 15px;
+  position: relative;
+  overflow: hidden;
+  &--break {
+    .timer {
+      color: white;
+    }
+    .dot {
+      transform: scale(100);
+      background-color: $color-scondary;
+      transition: all 1s cubic-bezier(0.13, 0.56, 0.59, 0.96) 0.5s;
+    }
+  }
 }
 .content {
   padding: 25px;
   text-align: center;
+  z-index: 1;
 }
 
 .tomato-list {
   padding: 0;
-  margin-left: 0;
+  margin-bottom: 0;
 }
 .tomato {
   width: 10px;
@@ -145,5 +187,37 @@ export default {
   background-color: $color-primary;
   display: inline-block;
   margin: 0 5px;
+}
+.controls {
+  position: relative;
+  .button {
+    &--side {
+      position: absolute;
+      top: 50%;
+      &:first-child {
+        left: 50%;
+        transform: translate(-60px, -50%);
+      }
+      &:last-child {
+        right: 50%;
+        transform: translate(60px, -50%);
+      }
+    }
+  }
+}
+.timer {
+  transition: color 1.5s;
+}
+.dot {
+  position: absolute;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: $color-primary;
+  bottom: 25px;
+  transform: translateX(-50%);
+  transition: all 1s cubic-bezier(0.13, 0.56, 0.59, 0.96) 0.5s;
+  z-index: 0;
 }
 </style>
