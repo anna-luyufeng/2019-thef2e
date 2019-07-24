@@ -46,31 +46,53 @@ export default {
           <KingIcon />
         </div>
         <div ref="homeCells" :class="$style.home">
-          <div :class="$style.cell"></div>
-          <div :class="$style.cell"></div>
-          <div :class="$style.cell"></div>
-          <div :class="$style.cell"></div>
+          <div :class="$style.cell">
+            <img src="@src/assets/home_spades.png" />
+          </div>
+          <div :class="$style.cell">
+            <img src="@src/assets/home_hearts.png" />
+          </div>
+          <div :class="$style.cell">
+            <img src="@src/assets/home_diamonds.png" />
+          </div>
+          <div :class="$style.cell">
+            <img src="@src/assets/home_clubs.png" />
+          </div>
         </div>
       </div>
       <div :class="$style.tableau">
-        <div v-for="(column, index) in columns" :key="index" :class="$style.column">
+        <div v-for="(column, columnIndex) in columns" :key="columnIndex" :class="$style.column">
           <Card
             v-for="(card, cardIndex) in column"
             :key="`${card.suit}${card.value}`"
             :suit="card.suit"
             :value="card.value"
             :class="$style.card"
-            :style="{ top: `${cardIndex * 30}px` }"
           />
         </div>
       </div>
 
       <div :class="$style.footer">
-        <div :class="$style.meta">
-          <div>遊戲說明圖示</div>
-          <div>TIME 計時</div>
-          <div>SCORE 分數</div>
+        <div>
+          <div :class="$style.meta">
+            <span>遊戲說明圖示</span>
+            <span>TIME 00:00</span>
+            <span>SCORE 0</span>
+          </div>
+          <div :class="$style.copyright">
+            Made by
+            <a
+              href="https://github.com/littlegreening/2019-thef2e/tree/master/week2"
+              target="_blank"
+            >Anna Lu</a>.
+            Designed by
+            <a
+              href="https://challenge.thef2e.com/user/2104"
+              target="_blank"
+            >Daphne</a>.
+          </div>
         </div>
+
         <div :class="$style.buttons">
           <BaseButton>New Game</BaseButton>
           <BaseButton>Restart</BaseButton>
@@ -91,6 +113,14 @@ body {
   background: $color-background;
   font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-weight: 700;
+}
+a {
+  color: $color-primary;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  &:hover {
+    color: darken($color-primary, 10);
+  }
 }
 img {
   max-width: 100%;
@@ -99,7 +129,14 @@ button {
   font-family: inherit;
 }
 .wrapper {
-  margin: 2rem;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px;
+  width: 95%;
 }
 .tableau {
   display: flex;
@@ -110,7 +147,7 @@ button {
   flex-basis: calc(100% / 8 - 10px);
 }
 .card:not(:first-child) {
-  margin-top: -120px;
+  margin-top: -145px;
 }
 .header,
 .free,
@@ -135,17 +172,30 @@ button {
     border-radius: 8px;
     flex-basis: calc(100% / 4 - 10px);
   }
+  .home .cell {
+    position: relative;
+    background: white;
+    opacity: 0.6;
+    img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50%;
+    }
+  }
 }
 .footer {
   margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid #cccccc;
-  .meta {
-    display: flex;
-    flex: 1;
-    > div {
-      margin-right: 20px;
-    }
-  }
+}
+.meta span {
+  margin-right: 20px;
+}
+.copyright {
+  color: lighten($color-text-primary, 50);
+  font-size: 0.75rem;
+  margin-top: 10px;
 }
 </style>
