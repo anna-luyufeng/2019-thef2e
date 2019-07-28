@@ -18,9 +18,14 @@ export default {
 </template>
 
 <style lang="scss" module>
+@import "@design";
 .image {
   border-radius: 8px;
   border: 1px solid #cccccc;
   background: white;
+  transition: all 0.5s cubic-bezier(0, 0.785, 0, 1);
+  &:hover {
+    box-shadow: 0 0 0 2px $color-primary;
+  }
 }
 </style>

@@ -16,6 +16,12 @@ export default {
 };
 </script>
 <template>
-  <img :src="imgSrc" />
+  <img :src="imgSrc" :class="$style.image" />
 </template>
+<style lang="scss" module>
+.image {
+  max-width: 60px;
+}
+</style>
+
 

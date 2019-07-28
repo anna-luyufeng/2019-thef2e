@@ -1,6 +1,7 @@
 <script>
 import Deck from "./deck";
 import BaseButton from "@components/BaseButton";
+import BaseModal from "@components/BaseModal";
 import KingIcon from "@components/KingIcon";
 import Card from "@components/Card";
 
@@ -8,18 +9,24 @@ const totalColumns = 8;
 
 export default {
   name: "App",
-  components: { BaseButton, KingIcon, Card },
+  components: { BaseModal, BaseButton, KingIcon, Card },
   data() {
     return {
-      columns: []
+      columns: [],
+      ruleModalVisible: false
     };
   },
   mounted() {
     this.dealCardsToColumns();
   },
   methods: {
+    createNewDeck() {
+      this.columns = [];
+      this.dealCardsToColumns();
+    },
     dealCardsToColumns() {
       // TODO: need to copy this suffle result to restart the game
+      Deck.create();
       const getSuffledCards = Deck.shuffle();
       const cardsPerColumn = Math.floor(getSuffledCards.length / totalColumns);
       const columnsBonus = getSuffledCards.length % totalColumns;
@@ -44,6 +51,7 @@ export default {
         </div>
         <div :class="$style.center">
           <KingIcon />
+          <div>FREECELL</div>
         </div>
         <div ref="homeCells" :class="$style.home">
           <div :class="$style.cell">
@@ -63,7 +71,7 @@ export default {
       <div :class="$style.tableau">
         <div v-for="(column, columnIndex) in columns" :key="columnIndex" :class="$style.column">
           <Card
-            v-for="(card, cardIndex) in column"
+            v-for="card in column"
             :key="`${card.suit}${card.value}`"
             :suit="card.suit"
             :value="card.value"
@@ -73,40 +81,50 @@ export default {
       </div>
 
       <div :class="$style.footer">
-        <div>
-          <div :class="$style.meta">
-            <span>遊戲說明圖示</span>
-            <span>TIME 00:00</span>
-            <span>SCORE 0</span>
+        <div :class="$style.meta">
+          <div @click="ruleModalVisible = true">
+            <img :class="$style['rule-icon']" src="@src/assets/icon_rule.png" />
           </div>
-          <div :class="$style.copyright">
-            Made by
-            <a
-              href="https://github.com/littlegreening/2019-thef2e/tree/master/week2"
-              target="_blank"
-            >Anna Lu</a>.
-            Designed by
-            <a
-              href="https://challenge.thef2e.com/user/2104"
-              target="_blank"
-            >Daphne</a>.
-          </div>
+          <div>TIME 00:00</div>
+          <div>SCORE 0</div>
         </div>
 
         <div :class="$style.buttons">
-          <BaseButton>New Game</BaseButton>
+          <BaseButton @click="createNewDeck">New Game</BaseButton>
           <BaseButton>Restart</BaseButton>
           <BaseButton>Hint</BaseButton>
           <BaseButton>Undo</BaseButton>
         </div>
       </div>
     </div>
+    <BaseModal v-if="ruleModalVisible" @close="ruleModalVisible = false">
+      <div slot="header">
+        <KingIcon />
+        <div>FREECELL RULE</div>
+      </div>
+
+      <p>The object of the game is to build up all cards on foundations from Ace to King by following suit. You win when all 52 cards are moved there, 13 to a pile.</p>
+      <p>Top cards of tableau piles and cards from Cells are available to play. You can build tableau piles down by alternating color. Only one card at a time can be moved. The top card of any tableau pile can also be moved to any Cell. Each Cell (or Reserve space) may contain only one card. Cards in the cells can be moved to the foundation piles or back to the tableau piles, if possible.</p>
+      <p>The rules state that you can move only one card at a time, but you can move group of cards in the proper sequence if you have enough free (empty) Cells and/or tableau piles.</p>
+      <div slot="footer" :class="$style.copyright">
+        Made by
+        <a
+          href="https://github.com/littlegreening/2019-thef2e/tree/master/week2"
+          target="_blank"
+        >Anna Lu</a>.
+        Designed by
+        <a
+          href="https://challenge.thef2e.com/user/2104?schedule=2826#works-2826"
+          target="_blank"
+        >Daphne</a>.
+      </div>
+    </BaseModal>
   </div>
 </template>
 
 <style lang="scss" module>
 @import "@design";
-@import url("https://fonts.googleapis.com/css?family=Lato:700,900&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700,900&display=swap");
 
 body {
   margin: 0;
@@ -152,7 +170,8 @@ button {
 .header,
 .free,
 .home,
-.footer {
+.footer,
+.meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -161,6 +180,7 @@ button {
   margin-bottom: 30px;
   .center {
     margin: 0 10px;
+    text-align: center;
   }
   .free,
   .home {
@@ -190,12 +210,23 @@ button {
   padding-top: 20px;
   border-top: 1px solid #cccccc;
 }
-.meta span {
+.meta div {
   margin-right: 20px;
 }
 .copyright {
   color: lighten($color-text-primary, 50);
   font-size: 0.75rem;
   margin-top: 10px;
+}
+
+.rule-icon {
+  border-radius: 50%;
+  border: 2px solid $color-text-primary;
+  width: 40px;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0, 0.785, 0, 1);
+  &:hover {
+    border-color: $color-primary;
+  }
 }
 </style>

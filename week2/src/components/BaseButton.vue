@@ -17,6 +17,8 @@ export default {};
   text-transform: uppercase;
   font-weight: 900;
   cursor: pointer;
+  outline: none;
+  border: none;
   &:hover {
     background: $color-button-hover-background;
   }

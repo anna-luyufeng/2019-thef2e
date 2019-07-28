@@ -10,7 +10,9 @@ class Deck {
             this.deck = [];
         }
         // 按照順序製造的牌
-    createDeck(suits, values) {
+    create() {
+            const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
+            const values = [2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K", "A"];
             for (let suit of suits) {
                 for (let value of values) {
                     this.deck.push(new Card(suit, value));
@@ -41,9 +43,7 @@ class Deck {
     }
 }
 
-const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
-const values = [2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K", "A"];
+
 
 const deck = new Deck();
-deck.createDeck(suits, values);
 export default deck;
