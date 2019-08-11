@@ -1,0 +1,63 @@
+body {
+    background: $color-gradient-vertical;
+}
+
+img {
+    max-width: 100%;
+}
+
+.animated {
+    animation-duration: 0.8s;
+    animation-fill-mode: both;
+}
+
+.slideInRight {
+    animation-name: slideInRight;
+}
+
+.slideInRightDelay {
+    animation-delay: calc(0.1s * var(--index));
+}
+
+.slideInUp {
+    animation-name: slideInUp;
+}
+
+.slideOutDown {
+    animation-name: slideOutDown;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translate3d(100%, 0, 0);
+        visibility: visible;
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translate3d(0, 100%, 0);
+        visibility: visible;
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        visibility: hidden;
+        transform: translate3d(0, 100%, 0);
+    }
+}
+
+.wrapper {
+    padding: 35px;
+    text-align: center;
+}

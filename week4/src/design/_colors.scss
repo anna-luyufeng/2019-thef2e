@@ -1,0 +1,10 @@
+$color-primary: #F5A623;
+$color-scondary: #F77C62;
+$color-primary-light: #a6a6a6;
+$color-grey: rgba(black, 0.35);
+$color-box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+$color-gradient-vertical: linear-gradient($color-primary, $color-scondary);
+$color-gradient-horizontal: linear-gradient(to right, $color-primary, $color-scondary);
+$color-button-text: white;
+$color-button-background: $color-gradient-vertical;
+$color-button-disabled-background: #AEAEAE;
