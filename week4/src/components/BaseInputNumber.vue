@@ -40,7 +40,7 @@ export default {
     <span
       class="input__button input__button--decrease"
       role="button"
-      :class="{'input__button--disabled': minDisabled }"
+      :class="{ 'input__button--disabled': minDisabled }"
       @click="setCurrentValue(currentValue - 1)"
     >−</span>
     <span

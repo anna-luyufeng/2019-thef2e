@@ -15,6 +15,14 @@ export default {
   data() {
     return {
       addCardFormVisible: false,
+      addCardForm: {
+        number: '',
+        expired: '',
+        cvc: '',
+        firstName: '',
+        lastName: '',
+        name: '',
+      },
       paying: false,
       cards: [
         {
@@ -52,13 +60,16 @@ export default {
         this.$router.push({ name: 'payment-success' })
       }, 2000)
     },
+    handleAddCard() {
+      this.addCardFormVisible = !this.addCardFormVisible
+    },
   },
 }
 </script>
 <template>
   <div class="wrapper">
     <div class="navbar">
-      <div class="navbar__back" @click="$router.push({name: 'home'})"></div>
+      <div class="navbar__back" @click="$router.push({ name: 'home' })"></div>
       <div class="navbar__title">Please select a card</div>
     </div>
     <transition-group
@@ -71,17 +82,17 @@ export default {
         v-for="(card, index) in cards"
         :key="card.name"
         class="card__item"
-        :style="{'--index': index}"
+        :style="{ '--index': index }"
         @click="selected = card.name"
       >
-        <img :src="require(`@src/assets/card_bg${(index+1)%3}.svg`)" :alt="card.name" />
+        <img :src="require(`@src/assets/card_bg${(index + 1) % 3}.svg`)" :alt="card.name" />
         <div class="card__info">
           <div>
             <input
-              class="card__radio"
-              v-model="selected"
-              :value="card.name"
               :id="card.name"
+              v-model="selected"
+              class="card__radio"
+              :value="card.name"
               type="radio"
             />
             <label class="card__label" :for="card.name">{{ card.name }}</label>
@@ -103,9 +114,9 @@ export default {
 
     <BaseButton
       class="button--pay"
-      @click="handleToPay"
       :disabled="nextDisabled"
       :loading="paying"
+      @click="handleToPay"
     >Pay</BaseButton>
 
     <transition
@@ -118,36 +129,33 @@ export default {
         <form class="form">
           <div class="form__item">
             <label for>Card Number</label>
-            <input type="text" placeholder="Enter here" />
+            <input v-model="addCardForm.number" type="number" placeholder="Enter here" />
           </div>
           <div class="form__split">
             <div class="form__item">
               <label for>Expiration Date</label>
-              <input type="text" placeholder="MM/YY" />
+              <input v-model="addCardForm.expired" type="month" placeholder="MM/YY" />
             </div>
             <div class="form__item">
               <label for>CVC</label>
-              <input type="text" placeholder="3-4 digits" />
+              <input v-model="addCardForm.cvc" type="number" placeholder="3-4 digits" />
             </div>
           </div>
 
           <div class="form__item">
             <label for>First Name</label>
-            <input type="text" placeholder="Enter here" />
+            <input v-model="addCardForm.firstName" type="text" placeholder="Enter here" />
           </div>
           <div class="form__item">
             <label for>Last Name</label>
-            <input type="text" placeholder="Enter here" />
+            <input v-model="addCardForm.lastName" type="text" placeholder="Enter here" />
           </div>
           <div class="form__item">
             <label for>Card Nickname</label>
-            <input type="text" placeholder="Enter here" />
+            <input v-model="addCardForm.name" type="text" placeholder="Enter here" />
           </div>
         </form>
-        <BaseButton
-          class="button--add"
-          @click="addCardFormVisible = !addCardFormVisible"
-        >Add & Select</BaseButton>
+        <BaseButton class="button--add" @click="handleAddCard">Add & Select</BaseButton>
       </div>
     </transition>
   </div>
@@ -174,6 +182,10 @@ export default {
   }
 }
 .card {
+  &__list {
+    max-width: 344px;
+    margin: auto;
+  }
   &__item {
     position: relative;
     text-align: left;
@@ -240,7 +252,6 @@ export default {
   width: 100%;
   left: 0;
   bottom: 0;
-  height: 80%;
   border-top-right-radius: 40px;
   border-top-left-radius: 40px;
   background-color: rgba(white, 0.8);
@@ -258,12 +269,17 @@ export default {
   bottom: 35px;
   left: 50%;
   transform: translateX(-50%);
+  &:not(:disabled) {
+    background: white;
+    color: $color-primary;
+  }
 }
 .form {
   text-align: left;
   &__item {
     padding: 15px 0;
     border-bottom: 1px solid #979797;
+    flex: 1;
     label {
       display: block;
       margin-bottom: 10px;

@@ -7,19 +7,26 @@ export default {
 }
 </script>
 <template>
-  <div class="wrapper">
+  <div>
     <div class="message">
       <img
         class="message__image"
-        :src="require(`@src/assets/product_${Math.floor(Math.random()*5) + 1}.svg`)"
+        :src="require(`@src/assets/product_${Math.floor(Math.random() * 5) + 1}.svg`)"
       />
-
-      <div class="message__body">
-        <h3>Thank you for the purchase!</h3>
-        <div class="message__meta">Ref.{{+new Date}}</div>
-        <p>The food will soon be delivered to your designated place.</p>
-      </div>
-      <BaseButton @click="$router.push({name: 'home'})" type="outline">Back</BaseButton>
+      <transition enter-active-class="animated  zoomIn" appear>
+        <div class="message__body">
+          <h3>Thank you for the purchase!</h3>
+          <div class="message__meta">Ref.{{+new Date}}</div>
+          <p>The food will soon be delivered to your designated place.</p>
+        </div>
+      </transition>
+      <transition
+        enter-active-class="animated slideInUp"
+        leave-active-class="animated  slideOutDown"
+        appear
+      >
+        <BaseButton type="outline" @click="$router.push({ name: 'home' })" >Back</BaseButton>
+      </transition>
     </div>
   </div>
 </template>
@@ -30,6 +37,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  text-align: center;
 
   &__image {
     position: absolute;

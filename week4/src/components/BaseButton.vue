@@ -15,8 +15,8 @@ export default {
 <template>
   <button
     :class="[$style.button, { [$style[`button--${type}`]]: type }]"
-    v-on="$listeners"
     v-bind="$attrs"
+    v-on="$listeners"
   >
     <div v-if="loading">
       <div :class="$style.spinner"></div>

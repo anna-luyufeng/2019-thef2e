@@ -8,7 +8,6 @@ export default {
 
   data() {
     return {
-      tempValue: 0,
       products: [
         {
           id: 1,
@@ -16,6 +15,7 @@ export default {
           ingredients: 'Flour, egg, green onion, soy sauce',
           price: 40,
           image: 'product_1.svg',
+          qty: 1,
         },
         {
           id: 2,
@@ -23,6 +23,7 @@ export default {
           ingredients: 'Egg, Flour, Green Onion',
           price: 20,
           image: 'product_2.svg',
+          qty: 1,
         },
         {
           id: 3,
@@ -30,6 +31,7 @@ export default {
           ingredients: 'Red Beans, Flour, Milk',
           price: 10,
           image: 'product_3.svg',
+          qty: 4,
         },
         {
           id: 4,
@@ -37,6 +39,7 @@ export default {
           ingredients: 'Pork, Potato Starch, Shiitake, Coriander',
           price: 50,
           image: 'product_4.svg',
+          qty: 1,
         },
         {
           id: 5,
@@ -44,26 +47,9 @@ export default {
           ingredients: 'Oysters, Egg, Potato Starch',
           price: 50,
           image: 'product_5.svg',
+          qty: 0,
         },
       ],
-      cart: {
-        1: {
-          qty: 1,
-          price: 40,
-        },
-        2: {
-          qty: 1,
-          price: 20,
-        },
-        3: {
-          qty: 4,
-          price: 10,
-        },
-        4: {
-          qty: 1,
-          price: 50,
-        },
-      },
       methods: [
         {
           name: 'Card',
@@ -83,13 +69,18 @@ export default {
       ],
       mode: 'checkout', // checkout -> payment
       selectedMethod: '',
+      address: 'Taipei , No. 100, Sec. 1, Chongqing',
     }
   },
   computed: {
     total() {
-      const priceArray = Object.values(this.cart).map(
+      const selectedProducts = this.products.filter(
+        (product) => product.qty > 0
+      )
+      const priceArray = Object.values(selectedProducts).map(
         (product) => product.price * product.qty
       )
+
       const cartIsEmpty = priceArray.length === 0
       return cartIsEmpty ? '' : priceArray.reduce((prev, curr) => prev + curr)
     },
@@ -106,7 +97,7 @@ export default {
 </script>
 <template>
   <div>
-    <div class="address">Taipei , No. 100, Sec. 1, Chongqi</div>
+    <div class="address">{{address}}</div>
     <transition-group
       tag="div"
       class="product__list"
@@ -116,7 +107,7 @@ export default {
       <div
         v-for="(product, index) in products"
         :key="product.id"
-        :style="{'--index': index}"
+        :style="{ '--index': index }"
         class="product__item"
       >
         <div class="product__image">
@@ -127,7 +118,7 @@ export default {
           <div class="product__ingredients">{{ product.ingredients }}</div>
           <div class="product__actions">
             <div class="product__price">{{ product.price }}</div>
-            <BaseInputNumber class="product__qty" v-model="tempValue" />
+            <BaseInputNumber v-model="product.qty" class="product__qty" />
           </div>
         </div>
       </div>
@@ -141,7 +132,7 @@ export default {
               v-for="(method, index) in methods"
               :key="index"
               class="methods__item"
-              :class="{'methods__item--selected': selectedMethod === method.alias}"
+              :class="{ 'methods__item--selected': selectedMethod === method.alias }"
               @click="updateMethod(method.alias)"
             >
               <img :src="require(`@src/assets/${method.icon}`)" :alt="method.name" />
@@ -151,12 +142,20 @@ export default {
         </div>
       </transition>
       <div class="panel__total">
-        <div>Total ${{total}}</div>
-        <BaseButton v-if="mode === 'checkout'" @click="changeMode('payment')">Checkout</BaseButton>
+        <div v-if="total">
+          Total $
+          <span class="panel__price">{{total}}</span>
+        </div>
+        <div v-else>Pick some delicious food!</div>
+        <BaseButton
+          v-if="mode === 'checkout'"
+          :disabled="!total"
+          @click="changeMode('payment')"
+        >Checkout</BaseButton>
         <BaseButton
           v-else
-          @click="$router.push({ name: 'select-card'})"
           :disabled="!selectedMethod"
+          @click="$router.push({ name: 'select-card' })"
         >Next</BaseButton>
       </div>
     </div>
@@ -267,6 +266,13 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  &__price {
+    color: $color-primary;
+    font-weight: bold;
+    font-size: 1.25rem;
+    font-style: italic;
+    border-bottom: 1px solid #4a4a4a;
   }
 }
 .methods {
