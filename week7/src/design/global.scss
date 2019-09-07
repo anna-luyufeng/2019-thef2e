@@ -1,0 +1,44 @@
+.item {
+    &-link {
+        color: inherit;
+        background-color: rgba(white, 0.1);
+        margin-bottom: 20px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        &--accent,
+        &:active {
+            background-color: #654D8D
+        }
+    }
+    &-media {
+        margin-right: 15px;
+        display: flex;
+    }
+    &-inner {
+        color: white;
+        font-size: 0.95rem;
+    }
+    &-title {
+        font-size: 1rem;
+    }
+    &-text {
+        color: #a7a7a7;
+        margin-top: 8px
+    }
+}
+
+.van-cell-group {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.van-cell.van-field {
+    border-radius: 4px;
+}
+
+.van-hairline--top-bottom::after,
+.van-hairline-unset--top-bottom::after {
+    border-top-width: 0;
+}

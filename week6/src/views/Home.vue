@@ -46,12 +46,7 @@ export default {
       </router-link>
     </header>
     <main>
-      <transition-group
-        tag="div"
-        class="background"
-        enter-active-class="animated fadeInUp "
-        leave-active-class="animated animated-delay fadeInDown"
-      >
+      <transition-group tag="div" class="background" name="fade">
         <div
           v-for="({id, imageUrl} , roomIndex) in roomList"
           v-show="activeRoomIndex === roomIndex"
@@ -114,6 +109,17 @@ export default {
 <style lang="scss" scoped>
 @import "@design";
 $spacing: 4rem;
+
+.fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter-active {
+  transition: opacity 2s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 .container {
   padding: $spacing;
   height: 100vh;
