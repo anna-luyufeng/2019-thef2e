@@ -9,6 +9,9 @@ export default {
     BaseButton,
   },
   props: {
+    token: {
+      type: String,
+    },
     playback: {
       type: Object,
     },

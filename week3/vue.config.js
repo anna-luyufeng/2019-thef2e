@@ -16,6 +16,16 @@ module.exports = {
     },
     publicPath: process.env.NODE_ENV === 'production' ? '/2019-thef2e/week3/' : '/',
     outputDir: '../public/week3',
+    devServer: {
+        // proxy: {
+        //     '/api': {
+        //         target: 'https://accounts.spotify.com',
+        //         ws: true,
+        //         changeOrigin: true
+        //     }
+        // }
+
+    }
 }
 
 function resolveSrc(_path) {

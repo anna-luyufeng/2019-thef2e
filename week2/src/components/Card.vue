@@ -14,7 +14,7 @@ export default {
 };
 </script>
 <template>
-  <img :src="imgSrc" :class="$style.image" />
+  <img :src="imgSrc" :class="$style.image" @mousedown="(event) => $emit('mousedown', event)" />
 </template>
 
 <style lang="scss" module>

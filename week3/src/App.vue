@@ -1,6 +1,8 @@
 
 
 <script>
+import axios from 'axios'
+
 import BaseButton from '@components/BaseButton'
 import UserNavbar from '@components/UserNavbar'
 import Player from '@components/Player'
@@ -11,9 +13,9 @@ export default {
 
   data() {
     return {
-      loading: false,
+      fetching: false,
       isLogin: false,
-
+      accessToken: '',
       playingTrack: {
         name: 'Beautiful People',
         duration_ms: 222075,
@@ -30,29 +32,69 @@ export default {
       },
     }
   },
+  mounted() {
+    const locationHash = document.location.hash
+
+    if (locationHash) {
+      const responseParams = new URLSearchParams(locationHash.replace('#', ''))
+      this.accessToken = responseParams.get('access_token')
+      this.isLogin = true
+    }
+    const authParams = {
+      client_id: process.env.VUE_APP_SPOTIFY_CLIENT_ID,
+      response_type: 'token',
+      redirect_uri: process.env.VUE_APP_SPOTIFY_REDIRECT_URI,
+      scope:
+        'user-read-playback-state user-read-currently-playing user-modify-playback-state playlist-read-private',
+    }
+    const authUrl = new URL('https://accounts.spotify.com/authorize')
+
+    Object.keys(authParams).forEach((key) => {
+      authUrl.searchParams.set(key, authParams[key])
+    })
+    console.log('TCL: mounted -> authUrl', authUrl.toString())
+  },
   methods: {
-    goLogingPage() {
-      this.loading = true
-      setTimeout(() => {
-        this.isLogin = true
-        this.loading = false
-      }, 2000)
+    goAuthPage() {
+      const authParams = {
+        client_id: process.env.VUE_APP_SPOTIFY_CLIENT_ID,
+        response_type: 'token',
+        redirect_uri: process.env.VUE_APP_SPOTIFY_REDIRECT_URI,
+        scope:
+          'user-read-playback-state%20user-read-currently-playing%20ser-modify-playback-state%20playlist-read-private',
+      }
+      const authUrl = new URL('https://accounts.spotify.com/authorize')
+
+      Object.keys(authParams).forEach((key) => {
+        authUrl.searchParams.set(key, authParams[key])
+      })
+      // const authUrl = `https://accounts.spotify.com/authorize?client_id=${process.env.VUE_APP_SPOTIFY_CLIENT_ID}&response_type=token&redirect_uri=${process.env.VUE_APP_SPOTIFY_REDIRECT_URI}&scope=user-read-playback-state%20user-read-currently-playing%20user-modify-playback-state%20playlist-read-private`
+      window.location.href = authUrl.toString()
     },
     onSignout() {
       this.isLogin = false
+    },
+    onFetching(state) {
+      this.loading = state
     },
   },
 }
 </script>
 <template>
   <div id="app">
-    <UserNavbar :is-login="isLogin" @signout="onSignout">
+    <UserNavbar
+      :is-login="isLogin"
+      :fetching-data="fetching"
+      :token="accessToken"
+      @fetching="onFetching"
+      @signout="onSignout"
+    >
       <template v-slot:message>
-        <div v-if="loading">登入中⋯⋯</div>
+        <div v-if="fetching">登入中⋯⋯</div>
         <div v-else>
           <h3>歡迎來到 Poplayer</h3>
-          <p>2019/8/4 目前功能尚未完成，預計串接 Spotify API，請過陣子再回來玩耍唷～</p>
-          <BaseButton @click="goLogingPage">模擬 Spotify 使用者登入</BaseButton>
+          <p>2019/8/4 目前功能尚未完成，請過陣子再回來玩耍唷～</p>
+          <BaseButton @click="goAuthPage">Spotify 授權</BaseButton>
         </div>
 
         <p class="copyright">
@@ -70,15 +112,18 @@ export default {
       <div class="box__side box__side--left"></div>
       <div class="box__side box__side--bottom"></div>
       <div class="box__side box__side--right"></div>
-      <Player v-show="isLogin" :playback="playingTrack" />
+      <Player v-show="isLogin" :token="accessToken" :playback="playingTrack" />
     </div>
     <!-- <div class="api-tester">
-      <label for="login">模擬 Spotify 使用者登入</label>
+      <label for="login">Spotify 授權</label>
       <input type="checkbox" name="login" v-model="isLogin" />
     </div>-->
   </div>
 </template>
 <style lang="scss">
+$material-icons-font-path: '~material-icons/iconfont/';
+@import '~material-icons/iconfont/material-icons.scss';
+
 @import '@design';
 @import '@src/design/reset.scss';
 #app {

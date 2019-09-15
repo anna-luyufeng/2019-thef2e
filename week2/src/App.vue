@@ -13,13 +13,75 @@ export default {
   data() {
     return {
       columns: [],
-      ruleModalVisible: false
+      ruleModalVisible: false,
+      cardPositionBeforeDrag: ""
     };
   },
   mounted() {
     this.dealCardsToColumns();
   },
   methods: {
+    calcDraggingPosition(pageX, pageY) {
+      const {
+        left,
+        top,
+        scrollLeft,
+        maxCriticalX,
+        maxCriticalY
+      } = this.cardPositionBeforeDrag;
+      let x = pageX - left;
+      let y = pageY - top;
+
+      if (x <= scrollLeft) {
+        x = scrollLeft;
+      }
+
+      if (x >= maxCriticalX) {
+        x = maxCriticalX;
+      }
+
+      if (y >= maxCriticalY) {
+        y = maxCriticalY;
+      }
+
+      if (y <= 0 || maxCriticalY < 0) {
+        y = 0;
+      }
+
+      return {
+        left: x,
+        top: y
+      };
+    },
+    getCardPosition(target) {
+      const { left, top, width, height } = target.getBoundingClientRect();
+      const { scrollLeft, scrollTop } = document.body;
+      const maxCriticalX = scrollLeft + innerWidth - width;
+      const maxCriticalY = scrollTop + innerHeight - height;
+
+      return {
+        left,
+        top,
+        scrollLeft,
+        maxCriticalX,
+        maxCriticalY
+      };
+    },
+    onMouseUp() {
+      document.removeEventListener("mousemove", this.onMouseMove);
+    },
+    onMouseMove(event) {
+      const { pageX, pageY } = event;
+      const { left, top } = this.calcDraggingPosition(pageX, pageY);
+      event.target.style.cssText = `left:${left}px;top:${top}px;`;
+    },
+
+    tableauMouseDown(event) {
+      this.cardPositionBeforeDrag = this.getCardPosition(event.target);
+
+      document.addEventListener("mousemove", this.onMouseMove);
+      document.addEventListener("mouseup", this.onMouseUp);
+    },
     createNewDeck() {
       this.columns = [];
       this.dealCardsToColumns();
@@ -68,7 +130,7 @@ export default {
           </div>
         </div>
       </div>
-      <div :class="$style.tableau">
+      <div :class="$style.tableau" @mousedown.prevent="tableauMouseDown">
         <div v-for="(column, columnIndex) in columns" :key="columnIndex" :class="$style.column">
           <Card
             v-for="card in column"

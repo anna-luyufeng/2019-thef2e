@@ -1,38 +1,77 @@
 <script>
+import axios from 'axios'
 import BaseButton from '@components/BaseButton'
 export default {
   components: { BaseButton },
   props: {
+    token: {
+      type: String,
+    },
     isLogin: {
       type: Boolean,
       default: false,
+    },
+    fetchingData: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  filters: {
+    millisecondsToTime: function(ms) {
+      const formatNumber = (number) => {
+        if ((number + '').length < 2) {
+          number = `0${number}`
+        }
+        return number
+      }
+      const totalSec = ms / 1000
+      const min = Math.floor(totalSec / 60)
+      const sec = Math.floor(totalSec % 60)
+      return `${min}:${formatNumber(sec)}`
     },
   },
   data() {
     return {
       showNav: true,
-      playlists: [
-        {
-          id: '53Y8wT46QIMz5H4WQ8O22c',
-          images: [],
-          name: 'Wizzlers Big Playlist',
-
-          tracks: {
-            href:
-              'https://api.spotify.com/v1/users/wizzler/playlists/53Y8wT46QIMz5H4WQ8O22c/tracks',
-            total: 30,
-          },
-          type: 'playlist',
-          uri: 'spotify:user:wizzler:playlist:53Y8wT46QIMz5H4WQ8O22c',
-        },
-      ],
+      playlists: [],
+      viewingPlaylist: {
+        name: '',
+        tracks: [],
+      },
     }
   },
+  watch: {
+    token: 'getUserPlaylist',
+  },
   methods: {
-    changeViewingPlaylist() {},
+    changeViewingPlaylist(playlist) {
+      this.viewingPlaylist.name = playlist.name
+      axios
+        .get(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
+          headers: {
+            Authorization: 'Bearer ' + this.token,
+          },
+        })
+        .then(({ data }) => {
+          this.viewingPlaylist.tracks = data.items
+        })
+    },
     setPlayingTrack() {},
     toggleNav() {
       this.showNav = !this.showNav
+    },
+    getUserPlaylist() {
+      this.$emit('fetching', true)
+      axios
+        .get('https://api.spotify.com/v1/me/playlists', {
+          headers: {
+            Authorization: 'Bearer ' + this.token,
+          },
+        })
+        .then(({ data }) => {
+          this.playlists = data.items
+          this.$emit('fetching', false)
+        })
     },
   },
 }
@@ -47,9 +86,12 @@ export default {
 
         <nav class="nav">
           <ul class="nav-list" data-submenu-title="播放清單">
-            <li class="nav__item nav__item--active" @click="changeViewingPlaylist">每週新發現</li>
-            <li class="nav__item">心情大振</li>
-            <li class="nav__item">Deep Focus</li>
+            <li
+              class="nav__item"
+              v-for="playlist in playlists"
+              :key="playlist.id"
+              @click="changeViewingPlaylist(playlist)"
+            >{{ playlist.name }}</li>
           </ul>
           <ul class="nav-list" data-submenu-title="歌手">
             <li class="nav__item">Ariana Grande</li>
@@ -70,16 +112,21 @@ export default {
           <div class="bar"></div>
           <div class="bar"></div>
         </div>
-        <h3 class="playlist__name">每週新發現</h3>
+        <h3 class="playlist__name">{{ viewingPlaylist.name}}</h3>
         <div class="tracklist">
-          <div v-for="num in 15" :key="num" class="track" @click="setPlayingTrack(num)">
+          <div
+            v-for="{ track } in viewingPlaylist.tracks"
+            :key="track.id"
+            class="track"
+            @click="setPlayingTrack(track)"
+          >
             <div>
-              <h4 class="track__name">Beautiful People</h4>
-              <div class="track__album">No.6 Collaborations Project</div>
+              <h4 class="track__name">{{ track.name }}</h4>
+              <div class="track__album">{{ track.album.name }}</div>
             </div>
             <div>
-              <div>Ed Sheeran</div>
-              <div>10:00</div>
+              <div>{{ track.artists.map(artist => artist.name).join(', ')}}</div>
+              <div>{{ track.duration_ms | millisecondsToTime }}</div>
             </div>
           </div>
         </div>
@@ -155,6 +202,11 @@ $diff-between-drawer-navbar: 15px;
       font-size: 0.75em;
       margin-left: 25px;
       letter-spacing: 0.1em;
+    }
+
+    &:first-child {
+      max-height: 30vh;
+      overflow: auto;
     }
   }
   &-toggler {
