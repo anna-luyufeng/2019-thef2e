@@ -1,0 +1,21 @@
+a {
+    text-decoration: none;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ql-container {
+    height: 90%;
+    &.ql-snow {
+        border: none;
+    }
+}
+
+.ql-toolbar.ql-snow {
+    border: none;
+    border-bottom: 1px solid $color-border;
+}
