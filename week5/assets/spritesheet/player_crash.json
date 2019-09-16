@@ -1,0 +1,47 @@
+{"frames": {
+
+"player_crash_1.png":
+{
+	"frame": {"x":190,"y":0,"w":180,"h":237},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":180,"h":237},
+	"sourceSize": {"w":180,"h":237}
+},
+"player_crash_2.png":
+{
+	"frame": {"x":0,"y":0,"w":190,"h":239},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":9,"w":190,"h":239},
+	"sourceSize": {"w":190,"h":239}
+},
+"player_crash_3.png":
+{
+	"frame": {"x":370,"y":0,"w":189,"h":236},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":10,"w":189,"h":236},
+	"sourceSize": {"w":189,"h":236}
+},
+"player_crash_4.png":
+{
+	"frame": {"x":559,"y":0,"w":189,"h":236},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":10,"w":189,"h":236},
+	"sourceSize": {"w":189,"h":236}
+}},
+"animations": {
+	"player_crash": ["player_crash_1.png","player_crash_2.png","player_crash_3.png","player_crash_4.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "player_crash.png",
+	"format": "RGBA8888",
+	"size": {"w":748,"h":239},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:2098d59ee89f266bd9795217457255f6:aa4a5a84983659c09010eea8ec55a113:d471566c6e0a91c3f4d881a8d981a6f7$"
+}
+}

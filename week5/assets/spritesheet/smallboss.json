@@ -1,0 +1,33 @@
+{"frames": {
+
+"small_boss_1.png":
+{
+	"frame": {"x":0,"y":338,"w":161,"h":324},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":161,"h":324},
+	"sourceSize": {"w":161,"h":324},
+	"anchor": {"x":0,"y":0}
+},
+"small_boss_2.png":
+{
+	"frame": {"x":0,"y":0,"w":161,"h":338},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":161,"h":338},
+	"sourceSize": {"w":161,"h":338},
+	"anchor": {"x":0,"y":0}
+}},
+"animations": {
+	"small_boss": ["small_boss_1.png","small_boss_2.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "smallboss.png",
+	"format": "RGBA8888",
+	"size": {"w":161,"h":662},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:efb75e66124e7b2a62da36b13536802f:816f2787e2bdad695c03bfecc61a17ef:5cb85a0d35cc49bbc93882727f6659a4$"
+}
+}

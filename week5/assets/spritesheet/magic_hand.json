@@ -1,0 +1,51 @@
+{"frames": {
+
+"magic_hand_1.png":
+{
+	"frame": {"x":0,"y":0,"w":341,"h":134},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":226,"w":341,"h":134},
+	"sourceSize": {"w":341,"h":360},
+	"anchor": {"x":0,"y":0}
+},
+"magic_hand_2.png":
+{
+	"frame": {"x":0,"y":134,"w":341,"h":200},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":160,"w":341,"h":200},
+	"sourceSize": {"w":341,"h":360},
+	"anchor": {"x":0,"y":0}
+},
+"magic_hand_3.png":
+{
+	"frame": {"x":0,"y":334,"w":341,"h":288},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":72,"w":341,"h":288},
+	"sourceSize": {"w":341,"h":360},
+	"anchor": {"x":0,"y":0}
+},
+"magic_hand_4.png":
+{
+	"frame": {"x":0,"y":622,"w":341,"h":354},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":6,"w":341,"h":354},
+	"sourceSize": {"w":341,"h":360},
+	"anchor": {"x":0,"y":0}
+}},
+"animations": {
+	"magic_hand": ["magic_hand_1.png","magic_hand_2.png","magic_hand_3.png","magic_hand_4.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "magic_hand.png",
+	"format": "RGBA8888",
+	"size": {"w":341,"h":976},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:f516f47980361219a875c9abd944b408:a98fc4d6c4c83e5a59ce6bd1da3cf85f:d7a04e79f4e6bff4e9187a827686c15b$"
+}
+}
